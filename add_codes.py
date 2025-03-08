@@ -92,8 +92,8 @@ def process_all(raw_segments_file, raw_log_file, offset_time, offset_ms):
 
 if __name__ == "__main__":
 
-    raw_segments = "P48_Coded_Segments.csv" # Coded segments file
-    raw_log = "P48_Log.csv"                 # Log file
+    raw_segments = "P48_Coded_Segments_NEW.csv" # Coded segments file
+    raw_log = "P48_Log_NEW.csv"                 # Log file
     sync_segments = "0:28:44,6"             # Sync time for segments
     sync_logs = 2028992                     # Sync time for logs
     
