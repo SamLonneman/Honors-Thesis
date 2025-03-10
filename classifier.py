@@ -1,6 +1,6 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.tree import DecisionTreeClassifier, plot_tree
 from sklearn.metrics import classification_report, accuracy_score
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -20,6 +20,9 @@ def train_classifier(csv_file):
     data = data[data['HeadX'] != data['HeadX'].shift()]
     data = data[data['GazeX'] != data['GazeX'].shift()]
     data = data[data['ForwardX'] != data['ForwardX'].shift()]
+
+    # Take only first sample from each code
+    # data = data[data['Code'] != data['Code'].shift()]
     
     # Define the columns to be used as features
     feature_columns = [
@@ -85,10 +88,10 @@ def train_classifier(csv_file):
     target = data['Code']
     
     # Split the data into training and testing sets
-    X_train, X_test, y_train, y_test = train_test_split(features, target, test_size=0.5)
+    X_train, X_test, y_train, y_test = train_test_split(features, target, test_size=0.2, random_state=42)
     
-    # Initialize the Random Forest classifier
-    clf = RandomForestClassifier(n_estimators=100)
+    # Initialize a decision tree classifier
+    clf = DecisionTreeClassifier(random_state=42)
     
     # Train the classifier
     clf.fit(X_train, y_train)
@@ -100,16 +103,19 @@ def train_classifier(csv_file):
     print("Accuracy:", accuracy_score(y_test, y_pred))
     print("Classification Report:\n", classification_report(y_test, y_pred))
     
-    # Plot feature importance
+    # Export feature importance plot
     feature_importances_df = pd.DataFrame({
         'Feature': feature_columns,
         'Importance': clf.feature_importances_
     }).sort_values(by='Importance', ascending=False)
     sns.barplot(x='Importance', y='Feature', data=feature_importances_df)
     plt.title('Feature Importances')
-    plt.show()
-    
-    return clf
+    plt.savefig('feature_importances.png')
+
+    # Export decision tree plot
+    plt.figure(figsize=(100,50))
+    plot_tree(clf, feature_names=feature_columns, class_names=clf.classes_, filled=True, rounded=True)
+    plt.savefig('decision_tree.png')
 
 # Example usage
 csv_file = 'P48_Log_NEW_With_Codes_with_features.csv'
