@@ -31,37 +31,34 @@ def process_csv(input_file, output_file, offset_time="00:00:00,0"):
     df.to_csv(output_file, index=False)
 
 def add_codes_to_log(log_file, segments_file, output_file, offset_ms=0):
-
-    # Read files (already sorted by time)
+    # Read the log and segments
     log_df = pd.read_csv(log_file)
     segments_df = pd.read_csv(segments_file)
-    
-    # Initialize Code column
-    log_df['Code'] = None
-    
-    current_log_index = 0
-    log_length = len(log_df)
-    
-    # Single pass through non-overlapping segments
+
+    # Initialize Code column if not present
+    if 'Code' not in log_df.columns:
+        log_df['Code'] = None
+
+    # Track how many segments were applied
+    segments_applied = 0
+
+    # Loop over each segment and apply it to matching rows
     for _, segment in segments_df.iterrows():
         segment_start = segment['Beginning_Time']
         segment_end = segment['Ending_Time']
-        
-        # Advance to segment start
-        while current_log_index < log_length and (log_df.iloc[current_log_index]['AppTime'] - offset_ms) < segment_start:
-            if current_log_index % 100 == 0:
-                print(f"Applying codes to log file... Progress: {current_log_index / log_length * 100:.2f}%", end='\r')
-            current_log_index += 1
-        
-        # Mark all entries in this segment
-        while current_log_index < log_length and (log_df.iloc[current_log_index]['AppTime'] - offset_ms) <= segment_end:
-            if current_log_index % 100 == 0:
-                print(f"Applying codes to log file... Progress: {current_log_index / log_length * 100:.2f}%", end='\r')
-            log_df.iloc[current_log_index, log_df.columns.get_loc('Code')] = segment['Code']
-            current_log_index += 1
+        code = segment['Code']
+
+        # Find rows in log that fall within the time range (accounting for offset)
+        mask = (log_df['AppTime'] - offset_ms >= segment_start) & \
+               (log_df['AppTime'] - offset_ms <= segment_end)
+
+        if mask.any():
+            segments_applied += 1
+            log_df.loc[mask, 'Code'] = code
+
+    print(f"\nSegments with at least one matching row: {segments_applied} / {len(segments_df)}")
     
     # Save to output file
-    print('Applying codes to log file... Progress: 100.00%')
     save_with_progress(log_df, output_file)
 
 def save_with_progress(df, output_file, chunk_size=1000):
@@ -92,8 +89,8 @@ def process_all(raw_segments_file, raw_log_file, offset_time, offset_ms):
 
 if __name__ == "__main__":
 
-    raw_segments = "P48_Coded_Segments_NEW.csv" # Coded segments file
-    raw_log = "P48_Log_NEW.csv"                 # Log file
+    raw_segments = "P48_Coded_Segments.csv" # Coded segments file
+    raw_log = "P48_Log.csv"                 # Log file
     sync_segments = "0:28:44,6"             # Sync time for segments
     sync_logs = 2028992                     # Sync time for logs
     
