@@ -100,6 +100,7 @@ def train_classifier(csv_file):
     y_pred = clf.predict(X_test)
     
     # Evaluate the classifier
+    print(f'Number of leaf nodes: {clf.tree_.n_leaves}')
     print("Accuracy:", accuracy_score(y_test, y_pred))
     print("Classification Report:\n", classification_report(y_test, y_pred))
     
@@ -110,6 +111,7 @@ def train_classifier(csv_file):
     }).sort_values(by='Importance', ascending=False)
     sns.barplot(x='Importance', y='Feature', data=feature_importances_df)
     plt.title('Feature Importances')
+    plt.tight_layout()
     plt.savefig('feature_importances.png')
 
     # Export decision tree plot
