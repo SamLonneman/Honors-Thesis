@@ -89,9 +89,13 @@ def process_all(raw_segments_file, raw_log_file, offset_time, offset_ms):
 
 if __name__ == "__main__":
 
-    raw_segments = "P48_Coded_Segments.csv" # Coded segments file
-    raw_log = "P48_Log.csv"                 # Log file
-    sync_segments = "0:28:44,6"             # Sync time for segments
-    sync_logs = 2028992                     # Sync time for logs
+    # raw_segments = "P48_Coded_Segments.csv" # Coded segments file
+    # raw_log = "P48_Log.csv"                 # Log file
+    # sync_segments = "0:28:44,6"             # Sync time for segments
+    # sync_logs = 2028992                     # Sync time for logs
+    raw_segments = "P35_Coded_Segments.csv" # Coded segments file
+    raw_log = "P35_Log.csv"                 # Log file
+    sync_segments = "0:25:24,6"             # Sync time for segments
+    sync_logs = 1783382                     # Sync time for logs
     
     process_all(raw_segments, raw_log, sync_segments, sync_logs)
