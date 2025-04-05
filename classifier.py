@@ -118,5 +118,5 @@ def train_classifier(csv_file):
     plt.savefig('decision_tree.png')
 
 # Example usage
-csv_file = 'P48_Log_NEW_With_Codes_with_features.csv'
+csv_file = 'P48_Log_Features.csv'
 classifier = train_classifier(csv_file)

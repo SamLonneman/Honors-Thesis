@@ -85,6 +85,6 @@ def add_features(csv_file, output_file):
     data.to_csv(output_file, index=False)
 
 # Example usage
-csv_file = 'P48_Log_NEW_With_Codes.csv'
-output_file = 'P48_Log_NEW_With_Codes_with_features.csv'
+csv_file = 'P48_Log_With_Codes.csv'
+output_file = 'P48_Log_Features.csv'
 add_features(csv_file, output_file)

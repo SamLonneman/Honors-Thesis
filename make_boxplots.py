@@ -34,7 +34,7 @@ def generate_boxplots(csv_file, columns, output_folder='BoxPlots'):
             print(f"Column '{column}' not found in the CSV file.")
 
 # Example usage
-csv_file = 'P48_Log_NEW_With_Codes_with_features.csv'
+csv_file = 'P48_Log_Features.csv'
 columns_to_plot = ['HoloRightHandDistance', 'HoloRightHandSpeed', 'HoloLeftHandDistance', 'HoloLeftHandSpeed', 'DistanceBetweenHands', 'HeadDistance', 'HeadSpeed']
 
 generate_boxplots(csv_file, columns_to_plot)
