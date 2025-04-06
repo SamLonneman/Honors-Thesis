@@ -145,6 +145,17 @@ def train_and_evaluate_model(data, generate_graphics=False):
         plt.title('Feature Importances')
         plt.tight_layout()
         plt.savefig('feature_importances.png')
+        plt.close()
+
+        # Create a pie chart of class distribution
+        class_counts = target.value_counts()
+        plt.figure(figsize=(5, 5))
+        plt.pie(class_counts, labels=class_counts.index, autopct='%1.1f%%', startangle=140)
+        plt.title('Class Distribution')
+        plt.axis('equal')
+        plt.tight_layout()
+        plt.savefig('class_distribution.png')
+        plt.close()
 
         # Export decision tree plot
         # plt.figure(figsize=(100,50))
