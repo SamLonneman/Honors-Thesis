@@ -140,6 +140,7 @@ def train_and_evaluate_model(data, generate_graphics=False):
             'Feature': feature_columns,
             'Importance': clf.feature_importances_
         }).sort_values(by='Importance', ascending=False)
+        plt.figure(figsize=(8, 10))
         sns.barplot(x='Importance', y='Feature', data=feature_importances_df)
         plt.title('Feature Importances')
         plt.tight_layout()
