@@ -5,6 +5,7 @@ from sklearn.metrics import classification_report
 from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import cross_val_score, StratifiedKFold
+from sklearn.metrics import confusion_matrix
 
 feature_columns = [
     # 'AppTime',
@@ -65,6 +66,21 @@ feature_columns = [
     'DistanceBetweenHands'
 ]
 
+def plot_confusion_matrix(cm, labels):
+    # Create a heatmap for the confusion matrix
+    plt.figure(figsize=(8, 6))
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=labels, yticklabels=labels)
+    
+    # Adding labels and title
+    plt.xlabel('Predicted Labels')
+    plt.ylabel('True Labels')
+    plt.title('Confusion Matrix')
+    
+    # Show the plot
+    plt.tight_layout()
+    plt.savefig('confusion_matrix.png')
+    plt.close()
+
 def load_and_concatenate_data(file_list):
     data_frames = []
     for file in file_list:
@@ -97,9 +113,18 @@ def train_and_evaluate_model(data, generate_graphics=False):
 
     # Cross-validation
     cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
-    scores = cross_val_score(clf, normalized_features, target, cv=cv, scoring='f1_weighted')
-    print(f"Cross-validation F1 scores: {scores}")
-    print(f"Mean F1 score: {scores.mean()}")
+
+    # For each fold, fit the model and evaluate
+    for fold, (train_idx, test_idx) in enumerate(cv.split(normalized_features, target)):
+        X_train, X_test = normalized_features[train_idx], normalized_features[test_idx]
+        y_train, y_test = target.iloc[train_idx], target.iloc[test_idx]
+
+        clf.fit(X_train, y_train)
+        y_pred = clf.predict(X_test)
+
+        cm = confusion_matrix(y_test, y_pred)
+        plot_confusion_matrix(cm, clf.classes_)
+        print(f"Fold {fold + 1} Classification Report:\n", classification_report(y_test, y_pred))
 
     # Fit the model on the entire dataset
     clf.fit(normalized_features, target)
